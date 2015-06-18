@@ -29,14 +29,14 @@
                 "type": "font"
             },
             {
-                "file": "images/sun-28.png",
-                "menuIcon": true,
-                "name": "IMAGES_SUN_28_PNG",
+                "file": "images/sun.png",
+                "name": "IMAGES_SUN_PNG",
                 "type": "png"
             },
             {
-                "file": "images/sun.png",
-                "name": "IMAGES_SUN_PNG",
+                "file": "images/sun-28.png",
+                "menuIcon": true,
+                "name": "IMAGES_SUN_28_PNG",
                 "type": "png"
             }
         ]

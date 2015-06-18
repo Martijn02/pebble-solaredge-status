@@ -57,14 +57,11 @@ function loadData() {
       type:'json'
     },
     function(data) {
-      var today = data.overview.lastDayData.energy / 1000;
-      var month = data.overview.lastMonthData.energy / 1000;
-      var total = data.overview.lifeTimeData.energy / 1000;
-      card.subtitle(today.toFixed(2) + 'kWh');
-      card.body('Today: ' + today.toFixed(2) + 'kWh\n' +
-                'Month: ' + month.toFixed(2) + 'kWh\n' +
-                'Total: ' + total.toFixed(2) + 'kWh\n' + 
-                'Power ' + data.overview.currentPower.power + 'W\n');
+      card.subtitle(numberFormat(data.overview.lastDayData.energy, 2, 'Wh'));
+      card.body('Today: ' + numberFormat(data.overview.lastDayData.energy, 2, 'Wh') + '\n' +
+                'Month: ' + numberFormat(data.overview.lastMonthData.energy, 2, 'Wh') + '\n' +
+                'Total: ' + numberFormat(data.overview.lifeTimeData.energy, 2, 'Wh') + '\n' + 
+                'Power ' + numberFormat(data.overview.currentPower.power, 2, 'W') + '\n');
      
       card.on('click', 'select', function() {
         console.log('Select clicked!');
@@ -240,3 +237,16 @@ function loadDetailData(dateDiff) {
 
 
  
+function numberFormat(value, precision, suffix) {
+  var unit = '';
+  if(value > 1000) {
+    value = value / 1000;
+    unit = 'k';
+  }
+  if(value > 1000) {
+    value = value / 1000;
+    unit = 'M';
+  }
+  return value.toFixed(precision) + ' ' + unit + suffix;
+  
+}
