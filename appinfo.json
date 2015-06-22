@@ -30,6 +30,11 @@
                 "type": "font"
             },
             {
+                "file": "images/exclamation.png",
+                "name": "IMAGES_EXCLAMATION_PNG",
+                "type": "png"
+            },
+            {
                 "file": "images/mobile_ffffff_70.png",
                 "name": "IMAGES_MOBILE_FFFFFF_70_PNG",
                 "type": "png"

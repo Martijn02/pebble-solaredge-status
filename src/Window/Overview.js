@@ -14,7 +14,7 @@ var window = {
     position: new Vector2(2,45), 
     size: new Vector2(140, 28)
   }),
-  statusText: new UI.Text({
+  loadingText: new UI.Text({
     text: 'Fetching data',
     position: new Vector2(0,100), 
     size: new Vector2(144, 10),
@@ -22,12 +22,22 @@ var window = {
     color: (current_watch.platform == "basalt" ? 'red' : 'black'),
     textAlign: 'center'
   }),
+  lines: [],
+  animateIn: function() {
+    // Remove loading text
+    this.window.remove(this.loadingText);
+    // Animate logo up
+    this.logo.animate({ position: this.logo.position().set(2, 2) }, 400);
+    // Animate lines into view
+    for (var n = 0; n < this.lines.length; n++) {
+      this.lines[n].animateTo(25 + (n*24));
+    }
+  }
 };
-
 
 window.window.add(window.background);
 window.window.add(window.logo);
-window.window.add(window.statusText);
+window.window.add(window.loadingText);
 
 window.today = createLine(25*7, 'Today:', '0', 'Wh');
 window.month = createLine(49*7, 'Month:', '0', 'Wh');

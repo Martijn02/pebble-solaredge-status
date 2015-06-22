@@ -47,10 +47,7 @@ var window = {
   },
   animateBarsToZero: function() {
     for(var n = 0; n < 64; n++) {
-      var pos = this.bars[n].position().set(n*2 + Math.floor(n / 4), graphTop + (graphHeight-1));
-      var size = this.bars[n].size().set(2, 1);
-      // Schedule the animation with an animateDef
-      this.bars[n].animate({ position: pos, size: size });
+      this.animateBarTo(n, 0);
     }
   },
   animateBarTo: function(bar, value) {
