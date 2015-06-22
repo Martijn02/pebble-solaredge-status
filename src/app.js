@@ -55,16 +55,16 @@ errorWindow.background = new UI.Rect({
 });
 errorWindow.add(errorWindow.background);
 errorWindow.image = new UI.Image({
-  image: 'images/mobile_000000_70.png',
+  image: 'images/mobile_ffffff_70.png',
   position: new Vector2(37,37), 
   size: new Vector2(70, 70),
-  compositing: 'invert'
+  compositing: (current_watch.platform == "basalt" ? 'set' : 'clear')
 });
 errorWindow.add(errorWindow.image);
 errorWindow.statusText = new UI.Text({
   text: 'Please configure',
-  position: new Vector2(0,100), 
-  size: new Vector2(144, 44),
+  position: new Vector2(0,115), 
+  size: new Vector2(144, 25),
   font: 'gothic-24-bold',
   color: (current_watch.platform == "basalt" ? 'white' : 'black'),
   textAlign: 'center'
@@ -115,7 +115,7 @@ function createLine(top, legend, value, units) {
   var line = {
     legend: new UI.Text({
       text: legend,
-      position: new Vector2(2, top+4), 
+      position: new Vector2(2, top+2), 
       size: new Vector2(46, 1),
       font: 'gothic-24',
       color: 'black',
@@ -131,16 +131,16 @@ function createLine(top, legend, value, units) {
     }),
     units: new UI.Text({
       text: units,
-      position: new Vector2(112, top+4), 
+      position: new Vector2(112, top+2), 
       size: new Vector2(30, 1),
       font: 'gothic-24',
       color: 'black',
       textAlign: 'left'
     }),
     animateTo: function(top) {
-      this.legend.animate({position: this.legend.position().set(2, top+4)});
+      this.legend.animate({position: this.legend.position().set(2, top+2)});
       this.value.animate({position: this.value.position().set(48, top)});
-      this.units.animate({position: this.units.position().set(112, top+4)});
+      this.units.animate({position: this.units.position().set(112, top+2)});
     },
     text: function(text) {
       var value = text.split(' ', 2);
@@ -158,7 +158,7 @@ function createLine(top, legend, value, units) {
 
 
 
-/*if (Settings.option('siteId') && Settings.option('apiKey')) {
+if (Settings.option('siteId') && Settings.option('apiKey')) {
   loadData(function() {
     overviewWindow.remove(overviewWindow.statusText);
     var pos = overviewWindow.logo.position().set(2, 2);
@@ -168,11 +168,11 @@ function createLine(top, legend, value, units) {
       overviewWindow.lines[n].animateTo(25 + (n*24));
     }  
   });
-} else {*/
+} else {
   overviewWindow.hide();
-  //errorWindow.statusText.text("Please configure the app on your phone.");
+  errorWindow.statusText.text("Please configure");
   errorWindow.show();
-//}
+}
 
 
 
