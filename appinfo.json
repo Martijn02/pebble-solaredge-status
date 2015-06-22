@@ -10,6 +10,7 @@
         "media": [
             {
                 "file": "images/menu_icon.png",
+                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
                 "type": "png"
             },
@@ -29,19 +30,13 @@
                 "type": "font"
             },
             {
+                "file": "images/mobile_000000_70.png",
+                "name": "IMAGES_MOBILE_000000_70_PNG",
+                "type": "png"
+            },
+            {
                 "file": "images/solaredgelogo.png",
                 "name": "IMAGES_SOLAREDGELOGO_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/sun.png",
-                "name": "IMAGES_SUN_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/sun-28.png",
-                "menuIcon": true,
-                "name": "IMAGES_SUN_28_PNG",
                 "type": "png"
             }
         ]

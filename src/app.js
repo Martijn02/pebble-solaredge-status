@@ -41,13 +41,35 @@ if(Pebble.getActiveWatchInfo) {
     platform: "aplite",
   };
 }
-
 console.log(JSON.stringify(current_watch));
 
 if (!Settings.option('maxPower')) {
   Settings.option('maxPower', 0);
 }
 
+var errorWindow = new UI.Window({});
+errorWindow.background = new UI.Rect({
+  position: new Vector2(0,0), 
+  size: new Vector2(144, 168),
+  backgroundColor: (current_watch.platform == "basalt" ? 'darkCandyAppleRed' : 'white')
+});
+errorWindow.add(errorWindow.background);
+errorWindow.image = new UI.Image({
+  image: 'images/mobile_000000_70.png',
+  position: new Vector2(37,37), 
+  size: new Vector2(70, 70),
+  compositing: 'invert'
+});
+errorWindow.add(errorWindow.image);
+errorWindow.statusText = new UI.Text({
+  text: 'Please configure',
+  position: new Vector2(0,100), 
+  size: new Vector2(144, 44),
+  font: 'gothic-24-bold',
+  color: (current_watch.platform == "basalt" ? 'white' : 'black'),
+  textAlign: 'center'
+});
+errorWindow.add(errorWindow.statusText);
 
 
 
@@ -72,16 +94,16 @@ overviewWindow.statusText = new UI.Text({
   position: new Vector2(0,100), 
   size: new Vector2(144, 10),
   font: 'gothic-24',
-  color: 'red',
+  color: (current_watch.platform == "basalt" ? 'red' : 'black'),
   textAlign: 'center'
 });
 overviewWindow.add(overviewWindow.statusText);
 
-overviewWindow.today = createLine(25*7, 'Today:', '20.82', 'kWh');
-overviewWindow.month = createLine(49*7, 'Month:', '20.82', 'MWh');
-overviewWindow.year = createLine(73*7, 'Year:', '20.82', 'MWh');
-overviewWindow.total = createLine(97*7, 'Total:', '20.82', 'MWh');
-overviewWindow.power = createLine(121*7, 'Power:', '3000', 'W');
+overviewWindow.today = createLine(25*7, 'Today:', '0', 'kWh');
+overviewWindow.month = createLine(49*7, 'Month:', '0', 'MWh');
+overviewWindow.year = createLine(73*7, 'Year:', '0', 'MWh');
+overviewWindow.total = createLine(97*7, 'Total:', '0', 'MWh');
+overviewWindow.power = createLine(121*7, 'Power:', '0', 'W');
 overviewWindow.lines = [overviewWindow.today, overviewWindow.month, overviewWindow.year, overviewWindow.total, overviewWindow.power];
 
 overviewWindow.show();
@@ -136,7 +158,7 @@ function createLine(top, legend, value, units) {
 
 
 
-if (Settings.option('siteId') && Settings.option('apiKey')) {
+/*if (Settings.option('siteId') && Settings.option('apiKey')) {
   loadData(function() {
     overviewWindow.remove(overviewWindow.statusText);
     var pos = overviewWindow.logo.position().set(2, 2);
@@ -146,9 +168,11 @@ if (Settings.option('siteId') && Settings.option('apiKey')) {
       overviewWindow.lines[n].animateTo(25 + (n*24));
     }  
   });
-} else {
-  overviewWindow.statusText.text("Please configure the app on your phone.");
-}
+} else {*/
+  overviewWindow.hide();
+  //errorWindow.statusText.text("Please configure the app on your phone.");
+  errorWindow.show();
+//}
 
 
 
@@ -357,5 +381,4 @@ function numberFormat(value, precision, suffix) {
     unit = 'M';
   }
   return value.toFixed(precision) + ' ' + unit + suffix;
-  
 }
