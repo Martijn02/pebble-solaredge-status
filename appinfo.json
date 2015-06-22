@@ -45,7 +45,7 @@
     "shortName": "SolarEdge",
     "uuid": "2dacc190-06c5-4764-9065-1074e7afbc18",
     "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.1",
     "watchapp": {
         "watchface": false
     }
