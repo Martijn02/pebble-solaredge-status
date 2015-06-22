@@ -27,53 +27,162 @@ Pebble.addEventListener('webviewclosed',
   }
 );
 
+var current_watch;
+if(Pebble.getActiveWatchInfo) {
+  try {
+    current_watch = Pebble.getActiveWatchInfo();
+  } catch(err) {
+    current_watch = {
+      platform: "basalt",
+    };
+  }
+} else {
+  current_watch = {
+    platform: "aplite",
+  };
+}
 
-// Create a Card with title and subtitle
-var card = new UI.Card({
-  title:' SolarEdge',
-  subtitle:'Loading data...',
-  style: 'large',
-  icon: 'images/sun.png'
-});
-
-// Display the Card
-card.show();
+console.log(JSON.stringify(current_watch));
 
 if (!Settings.option('maxPower')) {
   Settings.option('maxPower', 0);
 }
 
-if (Settings.option('siteId') && Settings.option('apiKey')) {
-  loadData();
-} else {
-  card.subtitle("");
-  card.body("Please configure the app on your phone.");
+
+
+
+
+var overviewWindow = new UI.Window({});
+
+overviewWindow.background = new UI.Rect({
+  position: new Vector2(0,0), 
+  size: new Vector2(144, 168),
+});
+overviewWindow.add(overviewWindow.background);
+
+overviewWindow.logo = new UI.Image({
+  image: 'images/solaredgelogo.png',
+  position: new Vector2(2,45), 
+  size: new Vector2(140, 28)
+});
+overviewWindow.add(overviewWindow.logo);
+
+overviewWindow.statusText = new UI.Text({
+  text: 'Fetching data',
+  position: new Vector2(0,100), 
+  size: new Vector2(144, 10),
+  font: 'gothic-24',
+  color: 'red',
+  textAlign: 'center'
+});
+overviewWindow.add(overviewWindow.statusText);
+
+overviewWindow.today = createLine(25*7, 'Today:', '20.82', 'kWh');
+overviewWindow.month = createLine(49*7, 'Month:', '20.82', 'MWh');
+overviewWindow.year = createLine(73*7, 'Year:', '20.82', 'MWh');
+overviewWindow.total = createLine(97*7, 'Total:', '20.82', 'MWh');
+overviewWindow.power = createLine(121*7, 'Power:', '3000', 'W');
+overviewWindow.lines = [overviewWindow.today, overviewWindow.month, overviewWindow.year, overviewWindow.total, overviewWindow.power];
+
+overviewWindow.show();
+
+
+
+
+function createLine(top, legend, value, units) {
+  var line = {
+    legend: new UI.Text({
+      text: legend,
+      position: new Vector2(2, top+4), 
+      size: new Vector2(46, 1),
+      font: 'gothic-24',
+      color: 'black',
+      textAlign: 'left'
+    }),
+    value: new UI.Text({
+      text: value,
+      position: new Vector2(48, top), 
+      size: new Vector2(60, 1),
+      font: 'gothic-28-bold',
+      color: 'black',
+      textAlign: 'right'
+    }),
+    units: new UI.Text({
+      text: units,
+      position: new Vector2(112, top+4), 
+      size: new Vector2(30, 1),
+      font: 'gothic-24',
+      color: 'black',
+      textAlign: 'left'
+    }),
+    animateTo: function(top) {
+      this.legend.animate({position: this.legend.position().set(2, top+4)});
+      this.value.animate({position: this.value.position().set(48, top)});
+      this.units.animate({position: this.units.position().set(112, top+4)});
+    },
+    text: function(text) {
+      var value = text.split(' ', 2);
+      this.value.text(value[0]);
+      this.units.text(value[1]);
+    }
+  };
+  
+  overviewWindow.add(line.legend);
+  overviewWindow.add(line.value);    
+  overviewWindow.add(line.units);
+  
+  return line;
 }
 
-function loadData() {
+
+
+if (Settings.option('siteId') && Settings.option('apiKey')) {
+  loadData(function() {
+    overviewWindow.remove(overviewWindow.statusText);
+    var pos = overviewWindow.logo.position().set(2, 2);
+    console.log('starting animation');
+    overviewWindow.logo.animate({ position: pos }, 400);
+    for (var n = 0; n < overviewWindow.lines.length; n++) {
+      overviewWindow.lines[n].animateTo(25 + (n*24));
+    }  
+  });
+} else {
+  overviewWindow.statusText.text("Please configure the app on your phone.");
+}
+
+
+
+
+
+function loadData(cb) {
   ajax(
     {
       url:'https://monitoringapi.solaredge.com/site/' + Settings.option('siteId') + '/overview.json?api_key='+Settings.option('apiKey'),
       type:'json'
     },
     function(data) {
-      card.subtitle(numberFormat(data.overview.lastDayData.energy, 2, 'Wh'));
-      card.body('Today: ' + numberFormat(data.overview.lastDayData.energy, 2, 'Wh') + '\n' +
-                'Month: ' + numberFormat(data.overview.lastMonthData.energy, 2, 'Wh') + '\n' +
-                'Total: ' + numberFormat(data.overview.lifeTimeData.energy, 2, 'Wh') + '\n' + 
-                'Power ' + numberFormat(data.overview.currentPower.power, 2, 'W') + '\n');
+      
+      
+      overviewWindow.today.text(numberFormat(data.overview.lastDayData.energy, 2, 'Wh'));
+      overviewWindow.month.text(numberFormat(data.overview.lastMonthData.energy, 2, 'Wh'));
+      overviewWindow.year.text(numberFormat(data.overview.lastYearData.energy, 2, 'Wh'));
+      overviewWindow.total.text(numberFormat(data.overview.lifeTimeData.energy, 2, 'Wh'));
+      overviewWindow.power.text(Math.round(data.overview.currentPower.power) + ' W');
      
-      card.on('click', 'select', function() {
+      
+      overviewWindow.on('click', 'select', function() {
         console.log('Select clicked!');
-        card.hide('');
+        overviewWindow.hide('');
         createDetailWindow();
         detailWindow.show();
       });
       
+      cb();
+      
     },
     function(error) {
       console.log(error);
-      card.body("Error: " + error);
+      overviewWindow.statusText.text("Error: " + error);
     }
   );
 }
@@ -167,7 +276,7 @@ function createDetailWindow() {
   detailWindow.on('click', 'select', function() {
     console.log('detailWindow select');
     detailWindow.hide();
-    card.show();
+    overviewWindow.show();
   });
   return detailWindow;
 }

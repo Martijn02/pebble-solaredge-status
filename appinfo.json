@@ -29,6 +29,11 @@
                 "type": "font"
             },
             {
+                "file": "images/solaredgelogo.png",
+                "name": "IMAGES_SOLAREDGELOGO_PNG",
+                "type": "png"
+            },
+            {
                 "file": "images/sun.png",
                 "name": "IMAGES_SUN_PNG",
                 "type": "png"
